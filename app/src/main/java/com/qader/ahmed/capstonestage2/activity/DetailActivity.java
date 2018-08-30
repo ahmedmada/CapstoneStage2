@@ -1,26 +1,19 @@
 package com.qader.ahmed.capstonestage2.activity;
 
-import android.app.ActivityOptions;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.LightingColorFilter;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -31,27 +24,25 @@ import android.widget.ToggleButton;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.qader.ahmed.capstonestage2.Model.Movie;
 import com.qader.ahmed.capstonestage2.Model.MovieDetail;
-import com.qader.ahmed.capstonestage2.Model.MovieInfo;
-import com.qader.ahmed.capstonestage2.Model.MoviesResponse;
+import com.qader.ahmed.capstonestage2.Model.Trailer;
 import com.qader.ahmed.capstonestage2.MovieWidget;
 import com.qader.ahmed.capstonestage2.Network.BaseUrls;
+import com.qader.ahmed.capstonestage2.Network.CheckInternetConnection;
+import com.qader.ahmed.capstonestage2.Network.JsonUtils;
 import com.qader.ahmed.capstonestage2.Network.rest.ApiClient;
 import com.qader.ahmed.capstonestage2.Network.rest.ApiInteface;
 import com.qader.ahmed.capstonestage2.R;
 import com.qader.ahmed.capstonestage2.adapter.MovieAdatpter;
-import com.qader.ahmed.capstonestage2.adapter.MovieInfoAdapter;
+import com.qader.ahmed.capstonestage2.adapter.TrailerAdapter;
 import com.qader.ahmed.capstonestage2.database.MovieContruct;
 import com.qader.ahmed.capstonestage2.database.MovieProvider;
-import com.qader.ahmed.capstonestage2.fragment.TrailerFragment;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import de.hdodenhof.circleimageview.CircleImageView;
 import io.paperdb.Paper;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -63,28 +54,22 @@ import static com.qader.ahmed.capstonestage2.constants.Constants.MOVIE_ID;
 public class DetailActivity extends AppCompatActivity {
 
 
-    @BindView(R.id.recycler_movie_info)
-    RecyclerView movieInfoRecyclerView;
     @BindView(R.id.detail_container_layout)
     LinearLayout linearLayout;
-    @BindView(R.id.recyclerview_similar)
-    RecyclerView similarRecyclerView;
-    @BindView(R.id.recyclerview_recomended)
-    RecyclerView recomendedRecyclerView;
+    @BindView(R.id.recyclerview_tailer)
+    RecyclerView recyclerview_tailer;
     @BindView(R.id.img_backdrop_path)
     ImageView backDrobPathImageView;
-    @BindView(R.id.tv_tagline)
+    @BindView(R.id.text_view_tagline)
     TextView tagLineTextView;
     @BindView(R.id.tv_overview)
     TextView overviewTextView;
-    @BindView(R.id.btn_trailer)
-    Button trailerButton;
-    @BindView(R.id.btn_favorite)
+    @BindView(R.id.favorite_button)
     ToggleButton favorite;
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
-    @BindView(R.id.my_toolbar)
-    Toolbar myToolbar ;
+    @BindView(R.id.text_view_all_details)
+    TextView text_view_all_details ;
 
 
 
@@ -93,13 +78,12 @@ public class DetailActivity extends AppCompatActivity {
     private BaseUrls baseUrls;
     private ApiInteface apiService;
     private MovieDetail movieDetail;
-    private MovieInfoAdapter movieInfoAdapter;
     private int movieId;
-    private List<Movie> movies = new ArrayList<>();
-    private List<MovieInfo> movieInfo = new ArrayList<>();
-    private MovieAdatpter movieAdatpter;
     private Cursor c;
     private FirebaseAnalytics mFirebaseAnalytics;
+
+    private List<Trailer> trailers = new ArrayList<>();
+    private TrailerAdapter trailerAdapter;
 
 
     @Override
@@ -121,7 +105,7 @@ public class DetailActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 if (favorite.isChecked()){
-                    // here add movie to database
+
                     ContentValues values =  new ContentValues();
                     values.put(MovieContruct.Favorite.MOVIE_ID, movieDetail.getId());
                     values.put(MovieContruct.Favorite.POSTER_PATH, movieDetail.getPoster_path());
@@ -132,7 +116,6 @@ public class DetailActivity extends AppCompatActivity {
                     Uri uri = getContentResolver().insert(MovieProvider.CONTENT_URI,values);
                     Log.e(DetailActivity.class.getSimpleName(),uri+"");
 
-                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.movie_add), Toast.LENGTH_SHORT).show();
                 }else {
 
                     String selection = "movie_id = ?";
@@ -142,8 +125,7 @@ public class DetailActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), getResources().getString(R.string.movie_deleted), Toast.LENGTH_SHORT).show();
 
                     }
-                    else
-                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.deleted_failed), Toast.LENGTH_SHORT).show();
+
                 }
             }
         });
@@ -157,6 +139,7 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
+    String allDetails;
     private void initUi(){
 
         Bundle bundle = new Bundle();
@@ -174,20 +157,14 @@ public class DetailActivity extends AppCompatActivity {
             backDrobPathImageView.setScaleType(ImageView.ScaleType.FIT_XY);
         }
 
-        movieInfo.add(new MovieInfo(R.drawable.ic_clock,movieDetail.getRuntime()+""));
-        movieInfo.add(new MovieInfo(R.drawable.ic_release_date,movieDetail.getRelease_date()+""));
-        movieInfo.add(new MovieInfo(R.drawable.ic_money,movieDetail.getRevenue()+""));
-        movieInfo.add(new MovieInfo(R.drawable.ic_budget,movieDetail.getBudget()+""));
-        movieInfo.add(new MovieInfo(R.drawable.ic_employee,movieDetail.getVote_count()+""));
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
-        movieInfoRecyclerView.setLayoutManager(linearLayoutManager);
-        movieInfoAdapter = new MovieInfoAdapter(this,movieInfo);
-        movieInfoRecyclerView.setAdapter(movieInfoAdapter);
+        allDetails = "Runtime   "+movieDetail.getRuntime()+"\n"
+                +"Release date  "+movieDetail.getRelease_date()+"\n"
+                +"Revenue  "+movieDetail.getRevenue()+"\n"
+                +"Budget  "+movieDetail.getBudget()+"\n"
+                +"Vote count  "+movieDetail.getVote_count()+"\n";
 
-        LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
-        similarRecyclerView.setLayoutManager(linearLayoutManager1);
-        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
-        recomendedRecyclerView.setLayoutManager(linearLayoutManager2);
+        text_view_all_details.setText(allDetails);
+
 
         Handler uiHandler = new Handler(Looper.getMainLooper());
         uiHandler.post(new Runnable(){
@@ -199,9 +176,16 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        recyclerview_tailer.setLayoutManager(linearLayoutManager);
+        trailerAdapter = new TrailerAdapter(this,trailers,baseUrls.getIMAGE_BASE_URL()+movieDetail.getPoster_path());
+        recyclerview_tailer.setAdapter(trailerAdapter);
+
     }
     public void getMovieDetail(final int id){
         Log.e("id",id+"");
+        Log.v("aaaaaaaaaaaaaaaaaa","id = "+id);
         Call<MovieDetail> call = apiService.getMovieDetails(id,API_KEY);
         call.enqueue(new Callback<MovieDetail>() {
             @Override
@@ -210,57 +194,68 @@ public class DetailActivity extends AppCompatActivity {
                 movieDetail = response.body();
                 if (!movieDetail.equals(null)){
                     initUi();
-                    getSimilarMovies(id);
-                    getRecomendedMovies(id);
-                    checkIfMovieFavorite();
+
+                    checkIfMovieInFavorite();
                 }
-                Log.e("movieDetail",movieDetail.getTitle());
-            }
 
-            @Override
-            public void onFailure(Call<MovieDetail> call, Throwable t) {
-                Log.e(TAG,t.getMessage());
-            }
-        });
-    }
-    public void getSimilarMovies(int id){
-        Call<MoviesResponse> call = apiService.getSimilarMovies(id,API_KEY);
-        call.enqueue(new Callback<MoviesResponse>() {
-            @Override
-            public void onResponse(Call<MoviesResponse> call, Response<MoviesResponse> response) {
-                movies = response.body().getResults();
-                movieAdatpter = new MovieAdatpter(DetailActivity.this,movies);
-                similarRecyclerView.setAdapter(movieAdatpter);
-
-            }
-
-            @Override
-            public void onFailure(Call<MoviesResponse> call, Throwable t) {
-                Log.e(TAG,""+t.getMessage());
-            }
-        });
-    }
-    public void getRecomendedMovies(int id){
-        Call<MoviesResponse> call = apiService.getRecommendationsMovies(id,API_KEY);
-        call.enqueue(new Callback<MoviesResponse>() {
-            @Override
-            public void onResponse(Call<MoviesResponse> call, Response<MoviesResponse> response) {
-                Log.e(TAG,movies.size()+"");
-                movies = response.body().getResults();
-                movieAdatpter = new MovieAdatpter(DetailActivity.this,movies);
-                recomendedRecyclerView.setAdapter(movieAdatpter);
                 progressBar.setVisibility(View.GONE);
                 linearLayout.setVisibility(View.VISIBLE);
 
             }
 
             @Override
-            public void onFailure(Call<MoviesResponse> call, Throwable t) {
-                Log.e(TAG,""+t.getMessage());
+            public void onFailure(Call<MovieDetail> call, Throwable t) {
+
+                progressBar.setVisibility(View.GONE);
+                linearLayout.setVisibility(View.VISIBLE);
+
             }
         });
     }
-    public void checkIfMovieFavorite(){
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (CheckInternetConnection.isConnected(this)) {
+            new FetchTrailerData().execute("http://api.themoviedb.org/3/movie/"+MOVIE_ID+"/videos?api_key="+API_KEY);
+        }else
+            Toast.makeText(this, "no internet for Trailers and Reviews !!", Toast.LENGTH_SHORT).show();
+    }
+
+
+    private class FetchTrailerData extends AsyncTask<String,Void,ArrayList<Trailer>> {
+
+        public FetchTrailerData() {
+        }
+        @Override
+        protected ArrayList<Trailer> doInBackground(String... strings) {
+
+            if (strings.length < 1 || strings[0] == null)
+            {return null;}
+
+            JsonUtils movieUtils = new JsonUtils();
+            ArrayList<Trailer> trailerModels = movieUtils.getTrailerList(strings[0]);
+            return trailerModels;
+        }
+        @Override
+        protected void onPostExecute(ArrayList<Trailer> trailers) {
+
+            if (trailers != null && !trailers.isEmpty()) {
+                trailerAdapter = new TrailerAdapter(DetailActivity.this,trailers,baseUrls.getIMAGE_BASE_URL()+movieDetail.getPoster_path());
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(DetailActivity.this);
+                recyclerview_tailer.setLayoutManager(linearLayoutManager);
+                recyclerview_tailer.setAdapter(trailerAdapter);
+                trailerAdapter.notifyDataSetChanged();
+            }
+
+
+        }
+    }
+
+
+
+    public void checkIfMovieInFavorite(){
 
         //this method to check if the movie in favorite list
         String URL = MovieProvider.CONTENT_URI+"/"+movieDetail.getId();
@@ -275,16 +270,4 @@ public class DetailActivity extends AppCompatActivity {
         }
         }
 
-        public void openTrailers(View view){
-        ContainerActivity.myFragment = new TrailerFragment();
-            TrailerFragment.MOVIE_ID = movieDetail.getId();
-            TrailerFragment.MOVIE_POSTER = movieDetail.getBackdrop_path();
-            Intent i = new Intent(this,ContainerActivity.class);
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(this).toBundle();
-                startActivity(i, bundle);
-            } else {
-                startActivity(i);
-            }
-        }
 }

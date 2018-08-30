@@ -7,7 +7,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
+
 public class MovieDatabaseHelper extends SQLiteOpenHelper {
     Context context;
     public MovieDatabaseHelper(Context context) {
@@ -61,10 +61,6 @@ public class MovieDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         Cursor c=sqLiteDatabase.query(MovieContruct.Favorite.TABLE_NAME, null, selection, selectionArgs, null, null, null);
         return c;
-    }    public boolean checkFavoritFilm(int id){
-        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
-        Cursor c=sqLiteDatabase.query(MovieContruct.Favorite.TABLE_NAME,null,"movie_id = ?", new String[]{id + ""},null,null,null);
-        return c.moveToFirst();
     }
 
 }

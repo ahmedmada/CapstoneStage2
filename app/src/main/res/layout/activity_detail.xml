@@ -7,25 +7,9 @@
     tools:context=".activity.DetailActivity"
     >
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/my_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
-            android:background="@color/colorPrimary"
-            app:titleTextColor="@color/white"
-            android:elevation="4dp"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            tools:targetApi="lollipop" />
-    </android.support.design.widget.AppBarLayout>
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?android:attr/actionBarSize"
         >
     <ProgressBar
         android:layout_width="wrap_content"
@@ -52,18 +36,23 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@color/black"
-            android:contentDescription="@string/movie_image"
             android:id="@+id/img_backdrop_path"
             />
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            >
+        <!--<FrameLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="bottom|end"-->
+            <!--&gt;-->
 
-        </FrameLayout>
+        <!--</FrameLayout>-->
     </FrameLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_overview"
+        android:padding="16dp"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -74,13 +63,13 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_tagline"
+        android:id="@+id/text_view_tagline"
         android:layout_weight="1"
         android:layout_gravity="center"
         android:paddingLeft="16dp"
         />
         <ToggleButton
-            android:id="@+id/btn_favorite"
+            android:id="@+id/favorite_button"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:scaleType="fitXY"
@@ -92,111 +81,103 @@
 
     </LinearLayout>
 
-        <android.support.v7.widget.RecyclerView
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/recycler_movie_info"
-            >
-        </android.support.v7.widget.RecyclerView>
+            android:id="@+id/text_view_all_details"
+            android:padding="15dp"/>
 
 
-    <TextView
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_overview"
-        android:padding="16dp"
-        />
+        android:layout_height="match_parent"
+        android:id="@+id/recyclerview_tailer"/>
 
 
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:id="@+id/layout_similar_movies"
-        >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp"
-            >
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="8dp"
-                >
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/similar"
-                    android:textAlignment="viewStart"
-                    android:gravity="start" />
 
-            </LinearLayout>
-            <android.support.v7.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/recyclerview_similar"
-                >
-            </android.support.v7.widget.RecyclerView>
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:id="@+id/layout_recomended_movies"
-        >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp"
-            >
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="8dp"
-                >
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/recomended"
-                    android:textAlignment="viewStart"
-                    android:gravity="start" />
-            </LinearLayout>
-            <android.support.v7.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/recyclerview_recomended"
-                >
-            </android.support.v7.widget.RecyclerView>
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
+
+
+    <!--<android.support.v7.widget.CardView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="8dp"-->
+        <!--android:id="@+id/layout_similar_movies"-->
+        <!--&gt;-->
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="vertical"-->
+            <!--android:padding="8dp"-->
+            <!--&gt;-->
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="horizontal"-->
+                <!--android:layout_marginBottom="8dp"-->
+                <!--&gt;-->
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:text="@string/similar"-->
+                    <!--android:textAlignment="viewStart"-->
+                    <!--android:gravity="start" />-->
+
+            <!--</LinearLayout>-->
+            <!--&lt;!&ndash;<android.support.v7.widget.RecyclerView&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:id="@+id/recyclerview_similar"&ndash;&gt;-->
+                <!--&lt;!&ndash;&gt;&ndash;&gt;-->
+            <!--&lt;!&ndash;</android.support.v7.widget.RecyclerView>&ndash;&gt;-->
+        <!--</LinearLayout>-->
+    <!--</android.support.v7.widget.CardView>-->
+    <!--<android.support.v7.widget.CardView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="8dp"-->
+        <!--android:id="@+id/layout_recomended_movies"-->
+        <!--&gt;-->
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="vertical"-->
+            <!--android:padding="8dp"-->
+            <!--&gt;-->
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="horizontal"-->
+                <!--android:layout_marginBottom="8dp"-->
+                <!--&gt;-->
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:text="@string/recomended"-->
+                    <!--android:textAlignment="viewStart"-->
+                    <!--android:gravity="start" />-->
+            <!--</LinearLayout>-->
+            <!--<android.support.v7.widget.RecyclerView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:id="@+id/recyclerview_recomended"-->
+                <!--&gt;-->
+            <!--</android.support.v7.widget.RecyclerView>-->
+        <!--</LinearLayout>-->
+    <!--</android.support.v7.widget.CardView>-->
 </LinearLayout>
     </ScrollView>
 
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_gravity="bottom"
-        android:id="@+id/layout_reviews_trailer"
-        android:padding="4dp"
-        >
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/btn_trailer"
-            android:background="@drawable/button_background"
-            android:onClick="openTrailers"
-            android:id="@+id/btn_trailer"
-            />
-    </LinearLayout>
+        <!--<Button-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:text="@string/btn_trailer"-->
+            <!--android:background="@drawable/button_background"-->
+            <!--android:onClick="openTrailers"-->
+            <!--android:id="@+id/btn_trailer"-->
+            <!--/>-->
     </FrameLayout>
 </android.support.design.widget.CoordinatorLayout>

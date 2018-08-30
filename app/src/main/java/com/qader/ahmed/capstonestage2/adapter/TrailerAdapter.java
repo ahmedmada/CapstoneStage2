@@ -16,7 +16,6 @@ import com.qader.ahmed.capstonestage2.Model.Trailer;
 import com.qader.ahmed.capstonestage2.Network.BaseUrls;
 import com.qader.ahmed.capstonestage2.Network.CheckInternetConnection;
 import com.qader.ahmed.capstonestage2.R;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 import butterknife.BindView;
@@ -28,8 +27,6 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
     Context context;
     List<Trailer> trailers;
     String imageUrl;
-    public TrailerAdapter() {
-    }
 
     public TrailerAdapter(Context context, List<Trailer> trailers,String imageUrl) {
         this.context = context;
@@ -74,10 +71,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
 
         public void bindData(final int position){
             final BaseUrls baseUrls = new BaseUrls();
-            if (!imageUrl.isEmpty()){
-                Picasso.get().load(baseUrls.getIMAGE_BASE_URL()+imageUrl).into(trailerImageView);
-                trailerImageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            }
+
             if (!trailers.get(position).getName().isEmpty()){
                 trailerTextView.setText(trailers.get(position).getName());
             }
@@ -93,7 +87,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
 
                         }
                     }else
-                        Toast.makeText(context, R.string.no_internet, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context,"no internet", Toast.LENGTH_SHORT).show();
                 }
             });
 

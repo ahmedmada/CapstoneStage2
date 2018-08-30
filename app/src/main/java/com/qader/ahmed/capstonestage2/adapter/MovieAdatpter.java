@@ -2,8 +2,6 @@ package com.qader.ahmed.capstonestage2.adapter;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,8 +32,6 @@ public class MovieAdatpter extends RecyclerView.Adapter<MovieAdatpter.MovieViewH
 
     Context context;
     List<Movie> movies;
-    public MovieAdatpter() {
-    }
 
     public MovieAdatpter(Context context, List<Movie> movies) {
         this.context = context;
@@ -55,7 +51,7 @@ public class MovieAdatpter extends RecyclerView.Adapter<MovieAdatpter.MovieViewH
     @Override
     public void onBindViewHolder(@NonNull final MovieViewHolder holder, final int position) {
         holder.bindData(position);
-    holder.itemView.setOnClickListener(new View.OnClickListener() {
+    holder.movieImageView.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             if (!movies.isEmpty()){
@@ -85,10 +81,8 @@ public class MovieAdatpter extends RecyclerView.Adapter<MovieAdatpter.MovieViewH
 
         @BindView(R.id.img_movie_card)
         ImageView movieImageView;
-        @BindView(R.id.tv_name_movie_card)
-        TextView movieTitleTextView;
-        @BindView(R.id.tv_vote_movie_card)
-        TextView movieVoteTextView;
+        @BindView(R.id.movie_name)
+        TextView movie_name;
         public MovieViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this,
@@ -99,12 +93,11 @@ public class MovieAdatpter extends RecyclerView.Adapter<MovieAdatpter.MovieViewH
             if (!movies.isEmpty()){
             String movieImage = movies.get(position).getPoster_path();
             String movieTitle = movies.get(position).getTitle();
-            double movieVote = movies.get(position).getVote_average();
 
             BaseUrls baseUrls = new BaseUrls();
 
-            movieTitleTextView.setText(movieTitle);
-            movieVoteTextView.setText(String.valueOf(movieVote));
+                movie_name.setText(movieTitle);
+
             if (!movieImage.isEmpty()){
                 Picasso.get().load(baseUrls.getIMAGE_BASE_URL()+movieImage).into(movieImageView);
                 movieImageView.setScaleType(ImageView.ScaleType.FIT_XY);

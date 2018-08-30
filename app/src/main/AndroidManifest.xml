@@ -25,7 +25,7 @@
                 android:value=".activity.MainActivity">
             </meta-data>
         </activity>
-        <activity android:name=".activity.ContainerActivity" />
+
         <provider
             android:exported="true"
             android:name=".database.MovieProvider"

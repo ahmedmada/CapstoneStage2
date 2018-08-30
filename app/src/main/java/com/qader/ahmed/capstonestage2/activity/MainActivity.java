@@ -10,6 +10,7 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -48,30 +49,22 @@ import static com.qader.ahmed.capstonestage2.constants.Constants.API_KEY;
 
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
-    private static final String TAG = MainActivity.class.getSimpleName();
+
     private BaseUrls baseUrls;
     private ApiInteface apiService;
-    private List<Movie> movies = new ArrayList<>();
+    private List<Movie> popularMovies = new ArrayList<>();
+    private List<Movie> topRatedMovies = new ArrayList<>();
+    private List<Movie> nowPlayingMovies = new ArrayList<>();
+    private List<Movie> upcomingMovies = new ArrayList<>();
+    private List<Movie> favouritMovies = new ArrayList<>();
     private MovieAdatpter movieAdatpter;
 
 
     @BindView(R.id.adView) AdView mAdView;
-    @BindView(R.id.recyclerview_popular)
-    RecyclerView popularRecyclerView;
-    @BindView(R.id.recyclerview_top_rated)
-    RecyclerView topRatedRecyclerView;
-    @BindView(R.id.recyclerview_playing_now)
-    RecyclerView playingNowRecyclerView;
-    @BindView(R.id.recyclerview_upcoming)
-    RecyclerView upcomingRecyclerView;
-    @BindView(R.id.recyclerview_favorite)
-    RecyclerView favoriteRecyclerView;
-    @BindView(R.id.main_layout)
-    LinearLayout linearLayout;
+    @BindView(R.id.recyclerview_all_type)
+    RecyclerView recyclerview_all_type;
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
-    @BindView(R.id.my_toolbar)
-    Toolbar myToolbar ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,15 +75,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         baseUrls = new BaseUrls();
         apiService = ApiClient.getClient().create(ApiInteface.class);
         getSupportLoaderManager().initLoader(0, null, this);
-        initUi();
+
+        recyclerview_all_type.setLayoutManager(new GridLayoutManager(MainActivity.this,2));
         if (CheckInternetConnection.isConnected(getApplicationContext())){
-            getPopularMovies();
-            getTopRatedMovies();
-            getNowPlayingMovies();
-            getUpcomingMovies();
+
+
+
+            popularMovies = getListMovies("popular");
+
             initAdMob();
         }else {
-            Toast.makeText(getApplicationContext(), getResources().getString(R.string.no_internet), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "check your internet", Toast.LENGTH_SHORT).show();
             progressBar.setVisibility(View.GONE);
         }
     }
@@ -98,127 +93,65 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void initAdMob(){
         MobileAds.initialize(this, ADMOB_APP_ID);
         AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)        // All emulators
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
                 .build();
         mAdView.loadAd(adRequest);
         mAdView.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
-                // Code to be executed when an ad finishes loading.
+
             }
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                // Code to be executed when an ad request fails.
 
             }
 
             @Override
             public void onAdOpened() {
-                // Code to be executed when an ad opens an overlay that
-                // covers the screen.
 
             }
 
             @Override
             public void onAdLeftApplication() {
-                // Code to be executed when the user has left the app.
-
 
             }
 
             @Override
             public void onAdClosed() {
-                // Code to be executed when when the user is about to return
-                // to the app after tapping on an ad.
-
 
             }
         });
     }
 
-    private void initUi(){
-        LinearLayoutManager linearLayoutManager1 = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
-        LinearLayoutManager linearLayoutManager2 = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
-        LinearLayoutManager linearLayoutManager3 = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
-        LinearLayoutManager linearLayoutManager4 = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
-        LinearLayoutManager linearLayoutManager5 = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
-        popularRecyclerView.setLayoutManager(linearLayoutManager1);
-        topRatedRecyclerView.setLayoutManager(linearLayoutManager2);
-        playingNowRecyclerView.setLayoutManager(linearLayoutManager3);
-        upcomingRecyclerView.setLayoutManager(linearLayoutManager4);
-        favoriteRecyclerView.setLayoutManager(linearLayoutManager5);
-//        myToolbar.setTitle(getResources().getString(R.string.app_name));
-//        setSupportActionBar(myToolbar);
-    }
 
-    public void getPopularMovies(){
-        Call<MoviesResponse> call = apiService.getPopularMovies(API_KEY);
+    public List<Movie> getListMovies(String type){
+        popularMovies = new ArrayList<>();
+        Call<MoviesResponse> call = apiService.getMovies(type,API_KEY);
         call.enqueue(new Callback<MoviesResponse>() {
             @Override
             public void onResponse(Call<MoviesResponse> call, Response<MoviesResponse> response) {
-                movies = response.body().getResults();
-                movieAdatpter = new MovieAdatpter(MainActivity.this,movies);
-                popularRecyclerView.setAdapter(movieAdatpter);
+                popularMovies = response.body().getResults();
 
-            }
-
-            @Override
-            public void onFailure(Call<MoviesResponse> call, Throwable t) {
-                Log.e(TAG,t.getMessage());
-            }
-        });
-    }
-    public void getTopRatedMovies(){
-        Call<MoviesResponse> call = apiService.getTopRatedMovies(API_KEY);
-        call.enqueue(new Callback<MoviesResponse>() {
-            @Override
-            public void onResponse(Call<MoviesResponse> call, Response<MoviesResponse> response) {
-                movies = response.body().getResults();
-                movieAdatpter = new MovieAdatpter(MainActivity.this,movies);
-                topRatedRecyclerView.setAdapter(movieAdatpter);
-            }
-
-            @Override
-            public void onFailure(Call<MoviesResponse> call, Throwable t) {
-                Log.e(TAG,t.getMessage());
-            }
-        });
-    }
-    public void getNowPlayingMovies(){
-        Call<MoviesResponse> call = apiService.getNowPlayingMovies(API_KEY);
-        call.enqueue(new Callback<MoviesResponse>() {
-            @Override
-            public void onResponse(Call<MoviesResponse> call, Response<MoviesResponse> response) {
-                movies = response.body().getResults();
-                movieAdatpter = new MovieAdatpter(MainActivity.this,movies);
-                playingNowRecyclerView.setAdapter(movieAdatpter);
-            }
-
-            @Override
-            public void onFailure(Call<MoviesResponse> call, Throwable t) {
-                Log.e(TAG,t.getMessage()+"");
-            }
-        });
-    }
-    public void getUpcomingMovies(){
-        Call<MoviesResponse> call = apiService.getUpcomingMovies(API_KEY);
-        call.enqueue(new Callback<MoviesResponse>() {
-            @Override
-            public void onResponse(Call<MoviesResponse> call, Response<MoviesResponse> response) {
-                movies = response.body().getResults();
-                movieAdatpter = new MovieAdatpter(MainActivity.this,movies);
-                upcomingRecyclerView.setAdapter(movieAdatpter);
                 progressBar.setVisibility(View.GONE);
-                linearLayout.setVisibility(View.VISIBLE);
+
+                movieAdatpter = new MovieAdatpter(MainActivity.this,popularMovies);
+                recyclerview_all_type.setAdapter(movieAdatpter);
+
+                movieAdatpter.notifyDataSetChanged();
+
             }
 
             @Override
             public void onFailure(Call<MoviesResponse> call, Throwable t) {
-                Log.e(TAG,t.getMessage());
+                popularMovies = null;
             }
         });
+
+        return popularMovies;
     }
+
+
 
 
     @Override
@@ -254,18 +187,76 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 movie.setPoster_path(moviePosterPath);
                 movie.setTitle(movieTitle);
                 movie.setVote_average(movieRating);
-                movies.add(movie);
+                favouritMovies.add(movie);
             } while (data.moveToNext());
-            movieAdatpter = new MovieAdatpter(this, movies);
-            favoriteRecyclerView.setAdapter(movieAdatpter);
-        } else {
-            Toast.makeText(this,"No Movie Added To Favorite Yet",Toast.LENGTH_SHORT).show();
+
         }
 
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+
+    }
+
+    public void openPopular(View view) {
+
+        if (popularMovies.size() > 0){
+
+            movieAdatpter = new MovieAdatpter(MainActivity.this,popularMovies);
+            recyclerview_all_type.setAdapter(movieAdatpter);
+
+            movieAdatpter.notifyDataSetChanged();
+        }else
+            popularMovies = getListMovies("popular");
+
+    }
+
+    public void openTopRated(View view) {
+        if (topRatedMovies.size() > 0){
+
+            movieAdatpter = new MovieAdatpter(MainActivity.this,topRatedMovies);
+            recyclerview_all_type.setAdapter(movieAdatpter);
+
+            movieAdatpter.notifyDataSetChanged();
+        }else
+            topRatedMovies = getListMovies("top_rated");
+
+    }
+
+    public void openNewPlaying(View view) {
+        if (nowPlayingMovies.size() > 0){
+
+            movieAdatpter = new MovieAdatpter(MainActivity.this,nowPlayingMovies);
+            recyclerview_all_type.setAdapter(movieAdatpter);
+
+            movieAdatpter.notifyDataSetChanged();
+        }else
+            nowPlayingMovies = getListMovies("upcoming");
+
+    }
+
+    public void openUpcoming(View view) {
+        if (upcomingMovies.size() > 0){
+
+            movieAdatpter = new MovieAdatpter(MainActivity.this,upcomingMovies);
+            recyclerview_all_type.setAdapter(movieAdatpter);
+
+            movieAdatpter.notifyDataSetChanged();
+        }else
+            upcomingMovies = getListMovies("now_playing");
+
+    }
+
+    public void openFavourit(View view) {
+        if (favouritMovies.size() > 0){
+
+            movieAdatpter = new MovieAdatpter(MainActivity.this,favouritMovies);
+            recyclerview_all_type.setAdapter(movieAdatpter);
+            movieAdatpter.notifyDataSetChanged();
+
+        }else
+            Toast.makeText(getApplicationContext(), "no favourit", Toast.LENGTH_SHORT).show();
 
     }
 }

@@ -16,8 +16,6 @@ public class MovieProvider extends ContentProvider {
     static final String PROVIDER_NAME = "movienewsprovider";
     static final String URL = "content://"+PROVIDER_NAME+"/movies";
     public static final Uri CONTENT_URI = Uri.parse(URL);
-    static final String ID = "id";
-    static final String TITLE = "title";
     static final int MOVIES = 1;
     static final int MOVIE_ID = 2;
     static final UriMatcher uriMatcher;
