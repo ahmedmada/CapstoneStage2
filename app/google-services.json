@@ -1,0 +1,100 @@
+{
+  "project_info": {
+    "project_number": "735976343704",
+    "firebase_url": "https://drawing-photo.firebaseio.com",
+    "project_id": "drawing-photo",
+    "storage_bucket": "drawing-photo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:735976343704:android:d86bca2693a5a269",
+        "android_client_info": {
+          "package_name": "com.qader.ahmed.capstonestage2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "735976343704-a60455udjbcs3ktu7nsj8l1nagucu6i1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.qader.ahmed.capstonestage2",
+            "certificate_hash": "ec009a740c7bc18a1fbd59359d6497cc53b723bd"
+          }
+        },
+        {
+          "client_id": "735976343704-5k48i5pht5qp9d2pp2q4i27f2lusecu8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcsftCP2HR18vprqJxVvS0y8p6AMkygd0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "735976343704-5k48i5pht5qp9d2pp2q4i27f2lusecu8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:735976343704:android:46f9318df3c0c864",
+        "android_client_info": {
+          "package_name": "com.qader.ahmed.drawingfun"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "735976343704-djqh2ojdcafrij9a0f8g544j3vhab41q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.qader.ahmed.drawingfun",
+            "certificate_hash": "ec009a740c7bc18a1fbd59359d6497cc53b723bd"
+          }
+        },
+        {
+          "client_id": "735976343704-5k48i5pht5qp9d2pp2q4i27f2lusecu8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcsftCP2HR18vprqJxVvS0y8p6AMkygd0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "735976343704-5k48i5pht5qp9d2pp2q4i27f2lusecu8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      },
+      "admob_app_id": "ca-app-pub-7544436209629362~2028037472"
+    }
+  ],
+  "configuration_version": "1"
+}
