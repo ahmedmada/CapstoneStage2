@@ -7,15 +7,35 @@
     tools:context=".activity.MainActivity"
     >
 
-<FrameLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:titleTextColor="@color/white"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            tools:targetApi="LOLLIPOP" />
+    </android.support.design.widget.AppBarLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?android:attr/actionBarSize"
     >
+
+
+
     <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/progress_bar"
         android:layout_gravity="center"
+        android:contentDescription="progress"
         />
     <com.google.android.gms.ads.AdView
         xmlns:ads="http://schemas.android.com/apk/res-auto"
@@ -44,35 +64,40 @@
                 android:layout_height="wrap_content"
                 android:text="popular"
                 android:layout_weight="1"
-                android:onClick="openPopular"/>
+                android:onClick="openPopular"
+                android:contentDescription="open popular"/>
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="top rated"
                 android:layout_weight="1"
-                android:onClick="openTopRated"/>
+                android:onClick="openTopRated"
+                android:contentDescription="open top rated"/>
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="now playing"
                 android:layout_weight="1"
-                android:onClick="openNewPlaying"/>
+                android:onClick="openNewPlaying"
+                android:contentDescription="open new playing"/>
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="upcoming"
                 android:layout_weight="1"
-                android:onClick="openUpcoming"/>
+                android:onClick="openUpcoming"
+                android:contentDescription="open upcoming"/>
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="favorite"
                 android:layout_weight="1"
-                android:onClick="openFavourit"/>
+                android:onClick="openFavourit"
+                android:contentDescription="open favourit"/>
 
         </LinearLayout>
 

@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -86,11 +87,19 @@ public class DetailActivity extends AppCompatActivity {
     private TrailerAdapter trailerAdapter;
 
 
+    @BindView(R.id.details_toolbar)
+    Toolbar myToolbar ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        try {
+            myToolbar.setTitle(getResources().getString(R.string.app_name));
+            setSupportActionBar(myToolbar);
+        }catch (Exception e){
+        }
         ButterKnife.bind(this);
         baseUrls = new BaseUrls();
         linearLayout.setVisibility(View.GONE);

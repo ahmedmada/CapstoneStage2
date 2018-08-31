@@ -1,5 +1,6 @@
 package com.qader.ahmed.capstonestage2.activity;
 
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.nfc.Tag;
 import android.support.annotation.NonNull;
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private List<Movie> nowPlayingMovies = new ArrayList<>();
     private List<Movie> upcomingMovies = new ArrayList<>();
     private List<Movie> favouritMovies = new ArrayList<>();
+    private List<Movie> defult = new ArrayList<>();
     private MovieAdatpter movieAdatpter;
 
 
@@ -66,27 +68,61 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
 
+    SharedPreferences sharedPref;
+
+    @BindView(R.id.my_toolbar)
+    Toolbar myToolbar ;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        try {
+            myToolbar.setTitle(getResources().getString(R.string.app_name));
+            setSupportActionBar(myToolbar);
+        }catch (Exception e){
+        }
         baseUrls = new BaseUrls();
         apiService = ApiClient.getClient().create(ApiInteface.class);
         getSupportLoaderManager().initLoader(0, null, this);
 
         recyclerview_all_type.setLayoutManager(new GridLayoutManager(MainActivity.this,2));
+
+        sharedPref = getPreferences(MODE_PRIVATE);
+        String sortBy = sharedPref.getString("SORT_CRITERION_KEY", "popular");
+//        loadMovieData(sortBy);
+
+
         if (CheckInternetConnection.isConnected(getApplicationContext())){
-
-
-
-            popularMovies = getListMovies("popular");
-
             initAdMob();
+            if (sortBy.equals("fav")){
+                if (favouritMovies.size() > 0){
+
+                    movieAdatpter = new MovieAdatpter(MainActivity.this,favouritMovies);
+                    recyclerview_all_type.setAdapter(movieAdatpter);
+                    movieAdatpter.notifyDataSetChanged();
+
+                }else
+                    Toast.makeText(getApplicationContext(), "no favourit", Toast.LENGTH_SHORT).show();
+
+            }
+            else {
+
+                defult = getListMovies(sortBy);
+
+                movieAdatpter = new MovieAdatpter(MainActivity.this,defult);
+                recyclerview_all_type.setAdapter(movieAdatpter);
+                movieAdatpter.notifyDataSetChanged();
+
+            }
+
         }else {
             Toast.makeText(getApplicationContext(), "check your internet", Toast.LENGTH_SHORT).show();
             progressBar.setVisibility(View.GONE);
+
         }
     }
 
@@ -126,16 +162,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
     public List<Movie> getListMovies(String type){
-        popularMovies = new ArrayList<>();
+        defult = new ArrayList<>();
         Call<MoviesResponse> call = apiService.getMovies(type,API_KEY);
         call.enqueue(new Callback<MoviesResponse>() {
             @Override
             public void onResponse(Call<MoviesResponse> call, Response<MoviesResponse> response) {
-                popularMovies = response.body().getResults();
+                defult = response.body().getResults();
 
                 progressBar.setVisibility(View.GONE);
 
-                movieAdatpter = new MovieAdatpter(MainActivity.this,popularMovies);
+                movieAdatpter = new MovieAdatpter(MainActivity.this,defult);
                 recyclerview_all_type.setAdapter(movieAdatpter);
 
                 movieAdatpter.notifyDataSetChanged();
@@ -144,11 +180,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             @Override
             public void onFailure(Call<MoviesResponse> call, Throwable t) {
-                popularMovies = null;
+                defult = null;
             }
         });
 
-        return popularMovies;
+        return defult;
     }
 
 
@@ -201,6 +237,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     public void openPopular(View view) {
 
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("SORT_CRITERION_KEY","popular");
+        editor.commit();
+
+
         if (popularMovies.size() > 0){
 
             movieAdatpter = new MovieAdatpter(MainActivity.this,popularMovies);
@@ -213,6 +254,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public void openTopRated(View view) {
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("SORT_CRITERION_KEY","top_rated");
+        editor.commit();
+
+
+
         if (topRatedMovies.size() > 0){
 
             movieAdatpter = new MovieAdatpter(MainActivity.this,topRatedMovies);
@@ -225,6 +273,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public void openNewPlaying(View view) {
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("SORT_CRITERION_KEY","upcoming");
+        editor.commit();
+
+
         if (nowPlayingMovies.size() > 0){
 
             movieAdatpter = new MovieAdatpter(MainActivity.this,nowPlayingMovies);
@@ -237,6 +291,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public void openUpcoming(View view) {
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("SORT_CRITERION_KEY","now_playing");
+        editor.commit();
+
+
         if (upcomingMovies.size() > 0){
 
             movieAdatpter = new MovieAdatpter(MainActivity.this,upcomingMovies);
@@ -249,6 +309,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     public void openFavourit(View view) {
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("SORT_CRITERION_KEY","fav");
+        editor.commit();
+
         if (favouritMovies.size() > 0){
 
             movieAdatpter = new MovieAdatpter(MainActivity.this,favouritMovies);

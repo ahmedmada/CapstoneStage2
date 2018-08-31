@@ -24,7 +24,8 @@
         android:padding="4dp"
         android:textSize="20sp"
         android:id="@+id/movie_name"
-        android:gravity="center" />
+        android:gravity="center"
+        android:contentDescription="movie name"/>
 
 
 </LinearLayout>

@@ -12,6 +12,7 @@
         android:layout_height="50dp"
         android:src="@drawable/ic_video_library_black_24dp"
         android:layout_margin="10dp"
+        android:contentDescription="video image"
         />
 
     <TextView
@@ -21,6 +22,7 @@
         android:layout_gravity="bottom|start"
         android:layout_margin="8dp"
         android:textStyle="bold"
-        android:textColor="@color/colorAccent"/>
+        android:textColor="@color/colorAccent"
+        android:contentDescription="video name"/>
 
 </LinearLayout>
